@@ -1,5 +1,6 @@
 import Resource, {
-  ResourceAddEditProps,
+  ResourceAddProps,
+  ResourceEditProps,
   TableColumns,
 } from "~/components/resource/resource";
 import { User } from "~/features/users/user.interface";
@@ -53,30 +54,30 @@ const tableColumns: TableColumns<UserRow> = (onEdit, onDelete) => [
 function UserManagement() {
   return (
     <Resource<User, UserRow>
-      title="User"
-      serviceKey="user"
-      getServices={() => userService.getUsers()}
-      tableColumns={tableColumns}
       AddProps={
         {
           validationSchema: userCreateSchema,
           service: userService.createUser,
-          initialValue: initialValue,
+          initialValue,
           render: UserCreateDialog,
-        } satisfies ResourceAddEditProps<typeof userCreateSchema>
-      }
-      EditProps={
-        {
-          validationSchema: userCreateSchema,
-          service: userService.createUser,
-          initialValue: initialValue,
-          render: UserCreateDialog,
-        } satisfies ResourceAddEditProps<typeof userCreateSchema>
+        } satisfies ResourceAddProps<typeof userCreateSchema>
       }
       DeleteProps={{
         service: userService.deleteById,
         label: (item) => `Delete ${item.name}`,
       }}
+      EditProps={
+        {
+          validationSchema: userCreateSchema,
+          service: userService.updateUser,
+          initialValue,
+          render: UserCreateDialog,
+        } satisfies ResourceEditProps<typeof userCreateSchema>
+      }
+      getServices={() => userService.getUsers()}
+      serviceKey="user"
+      tableColumns={tableColumns}
+      title="User"
     />
   );
 }

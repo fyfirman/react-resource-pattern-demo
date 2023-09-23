@@ -34,8 +34,16 @@ export interface ResourceAddEditProps<T extends ZodType = ZodType> {
   validationSchema: T;
   initialValue: z.infer<T>;
   render: (props: ResourceRenderProps<z.infer<T>>) => React.ReactNode;
-  service: (body: z.infer<T>) => Promise<Response<z.infer<T>>>;
   excludedInitialKey?: string[];
+}
+
+export interface ResourceAddProps<T extends ZodType = ZodType>
+  extends ResourceAddEditProps<T> {
+  service: (body: z.infer<T>) => Promise<Response<z.infer<T>>>;
+}
+export interface ResourceEditProps<T extends ZodType = ZodType>
+  extends ResourceAddEditProps<T> {
+  service: (id: string, body: z.infer<T>) => Promise<Response<z.infer<T>>>;
 }
 
 export interface ResourceRef<T> {
@@ -59,8 +67,8 @@ interface ResourceProps<BaseModel, ResourceRow, FilterModel = unknown> {
     deleteText?: string;
     cancelText?: string;
   };
-  AddProps?: ResourceAddEditProps;
-  EditProps?: ResourceAddEditProps;
+  AddProps?: ResourceAddProps;
+  EditProps?: ResourceEditProps;
   ref?: Ref<ResourceRef<BaseModel>>;
 }
 

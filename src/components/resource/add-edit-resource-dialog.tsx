@@ -20,7 +20,9 @@ interface AddEditResourceDialogProps<T extends ZodSchema, D = any> {
   serviceKey: string;
   title: string;
   onSuccess: () => Promise<any>;
-  service: <Body>(body: Body) => Promise<Response<T>>;
+  service:
+    | (<Body>(id: string, body: Body) => Promise<Response<T>>)
+    | (<Body>(body: Body) => Promise<Response<T>>);
   initialValue: z.infer<T>;
   validationSchema: T;
   render: (props: { form: UseFormReturn<T> }) => React.ReactNode;
@@ -51,8 +53,10 @@ const AddEditResourceDialog = <T extends ZodSchema>(
     return data;
   }, [initialValue, data]);
 
-  const resourceMutation = useMutation([serviceKey], service);
-  // const notification = useNotification();
+  const resourceMutation = useMutation([serviceKey], (payload) =>
+    !data ? service(payload) : service(data.id, payload)
+  );
+
   const form = useForm<T>({
     resolver: zodResolver(validationSchema),
     values: defaultValues,

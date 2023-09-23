@@ -1,5 +1,6 @@
 import Resource, {
-  ResourceAddEditProps,
+  ResourceAddProps,
+  ResourceEditProps,
   TableColumns,
 } from "~/components/resource/resource";
 import { RowActions } from "~/components/resource/row-action";
@@ -10,7 +11,9 @@ import CatCreateDialog, {
 import { Cat } from "~/features/cats/cat.interface";
 import { formatDate } from "~/libs/string-helper";
 
-interface CatRow extends Cat {}
+interface CatRow extends Omit<Cat, "birthDate"> {
+  birthDate: Date;
+}
 
 const tableColumns: TableColumns<CatRow> = (onEdit, onDelete) => [
   {
@@ -34,7 +37,7 @@ const tableColumns: TableColumns<CatRow> = (onEdit, onDelete) => [
     field: "birthDate",
     headerName: "Birth Date",
     renderCell(value) {
-      return formatDate(new Date(value.birthDate));
+      return formatDate(value.birthDate);
     },
   },
   {
@@ -58,7 +61,7 @@ function CatManagement() {
           service: catService.createCat,
           initialValue,
           render: CatCreateDialog,
-        } satisfies ResourceAddEditProps<typeof catCreateSchema>
+        } satisfies ResourceAddProps<typeof catCreateSchema>
       }
       DeleteProps={{
         service: catService.deleteById,
@@ -67,11 +70,12 @@ function CatManagement() {
       EditProps={
         {
           validationSchema: catCreateSchema,
-          service: catService.createCat,
+          service: catService.updateCat,
           initialValue,
           render: CatCreateDialog,
-        } satisfies ResourceAddEditProps<typeof catCreateSchema>
+        } satisfies ResourceEditProps<typeof catCreateSchema>
       }
+      getRows={(item) => ({ ...item, birthDate: new Date(item.birthDate) })}
       getServices={() => catService.getCats()}
       serviceKey="cat"
       tableColumns={tableColumns}

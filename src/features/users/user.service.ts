@@ -9,27 +9,35 @@ export const userCreateSchema = z.object({
   address: z.string(),
 });
 
-
 const createUser = async (payload: z.infer<typeof userCreateSchema>) => {
   const { data } = await axios.post<Response<User>>("/users", payload);
-  
+
   return data;
-}
+};
+const updateUser = async (
+  id: string,
+  payload: z.infer<typeof userCreateSchema>
+) => {
+  const { data } = await axios.put<Response<User>>(`/users/${id}`, payload);
+
+  return data;
+};
 const getUsers = async () => {
   const { data } = await axios.get<Response<User[]>>("/users");
-  
+
   return data;
-}
+};
 const deleteById = async (id: string) => {
   const { data } = await axios.delete<Response<User>>(`/users/${id}`);
-  
+
   return data;
-}
+};
 
 const userService = {
-  createUser, 
+  createUser,
   getUsers,
-  deleteById
+  updateUser,
+  deleteById,
 };
 
 export default userService;

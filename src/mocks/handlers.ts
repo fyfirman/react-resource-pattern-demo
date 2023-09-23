@@ -86,6 +86,52 @@ export const handlers = [
     return res(ctx.status(201));
   }),
 
+  // Handle PUT
+  rest.put(`/users/:id`, async (req, res, ctx) => {
+    const body = await req.json();
+    const id = req.params.id;
+    const index = users.findIndex((u) => u.id === id);
+
+    users[index] = {
+      ...users[index],
+      ...body,
+    };
+    return res(ctx.status(200));
+  }),
+  rest.put(`/companies/:id`, async (req, res, ctx) => {
+    const body = await req.json();
+    const id = req.params.id;
+    const index = companies.findIndex((u) => u.id === id);
+
+    companies[index] = {
+      ...companies[index],
+      ...body,
+    };
+    return res(ctx.status(200));
+  }),
+  rest.put(`/cats/:id`, async (req, res, ctx) => {
+    const body = await req.json();
+    const id = req.params.id;
+    const index = cats.findIndex((u) => u.id === id);
+
+    cats[index] = {
+      ...cats[index],
+      ...body,
+    };
+    return res(ctx.status(200));
+  }),
+  rest.put(`/dogs/:id`, async (req, res, ctx) => {
+    const body = await req.json();
+    const id = req.params.id;
+    const index = dogs.findIndex((u) => u.id === id);
+
+    dogs[index] = {
+      ...dogs[index],
+      ...body,
+    };
+    return res(ctx.status(200));
+  }),
+
   // Handle delete
   rest.delete(`/users/:id`, (req, res, ctx) => {
     users = users.filter((c) => c.id !== req.params.id);

@@ -14,6 +14,17 @@ const createCompany = async (payload: z.infer<typeof companyCreateSchema>) => {
 
   return data;
 };
+const updateCompany = async (
+  id: string,
+  payload: z.infer<typeof companyCreateSchema>
+) => {
+  const { data } = await axios.put<Response<Company>>(
+    `/companies/${id}`,
+    payload
+  );
+
+  return data;
+};
 const getCompanies = async () => {
   const { data } = await axios.get<Response<Company[]>>("/companies");
 
@@ -27,6 +38,7 @@ const deleteById = async (id: string) => {
 
 const companyService = {
   createCompany,
+  updateCompany,
   getCompanies,
   deleteById,
 };

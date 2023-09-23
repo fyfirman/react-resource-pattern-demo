@@ -1,5 +1,6 @@
 import Resource, {
-  ResourceAddEditProps,
+  ResourceAddProps,
+  ResourceEditProps,
   TableColumns,
 } from "~/components/resource/resource";
 import companyService, {
@@ -42,7 +43,7 @@ function CompanyManagement() {
           service: companyService.createCompany,
           initialValue,
           render: CompanyCreateDialog,
-        } satisfies ResourceAddEditProps<typeof companyCreateSchema>
+        } satisfies ResourceAddProps<typeof companyCreateSchema>
       }
       DeleteProps={{
         service: companyService.deleteById,
@@ -51,10 +52,10 @@ function CompanyManagement() {
       EditProps={
         {
           validationSchema: companyCreateSchema,
-          service: companyService.createCompany,
+          service: companyService.updateCompany,
           initialValue,
           render: CompanyCreateDialog,
-        } satisfies ResourceAddEditProps<typeof companyCreateSchema>
+        } satisfies ResourceEditProps<typeof companyCreateSchema>
       }
       getServices={() => companyService.getCompanies()}
       serviceKey="company"

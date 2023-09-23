@@ -17,6 +17,14 @@ const createDog = async (payload: z.infer<typeof dogCreateSchema>) => {
 
   return data;
 };
+const updateDog = async (
+  id: string,
+  payload: z.infer<typeof dogCreateSchema>
+) => {
+  const { data } = await axios.put<Response<Dog>>(`/dogs/${id}`, payload);
+
+  return data;
+};
 const getDogs = async () => {
   const { data } = await axios.get<Response<Dog[]>>("/dogs");
 
@@ -30,6 +38,7 @@ const deleteById = async (id: string) => {
 
 const dogService = {
   createDog,
+  updateDog,
   getDogs,
   deleteById,
 };

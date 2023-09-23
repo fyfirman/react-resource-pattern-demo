@@ -1,5 +1,6 @@
 import Resource, {
-  ResourceAddEditProps,
+  ResourceAddProps,
+  ResourceEditProps,
   TableColumns,
 } from "~/components/resource/resource";
 import { RowActions } from "~/components/resource/row-action";
@@ -10,7 +11,9 @@ import DogCreateDialog, {
 import { Dog } from "~/features/dogs/dog.interface";
 import { formatDate } from "~/libs/string-helper";
 
-interface DogRow extends Dog {}
+interface DogRow extends Omit<Dog, "birthDate"> {
+  birthDate: Date;
+}
 
 const tableColumns: TableColumns<DogRow> = (onEdit, onDelete) => [
   {
@@ -34,7 +37,7 @@ const tableColumns: TableColumns<DogRow> = (onEdit, onDelete) => [
     field: "birthDate",
     headerName: "Birth Date",
     renderCell(value) {
-      return formatDate(new Date(value.birthDate));
+      return formatDate(value.birthDate);
     },
   },
   {
@@ -58,7 +61,7 @@ function DogManagement() {
           service: dogService.createDog,
           initialValue,
           render: DogCreateDialog,
-        } satisfies ResourceAddEditProps<typeof dogCreateSchema>
+        } satisfies ResourceAddProps<typeof dogCreateSchema>
       }
       DeleteProps={{
         service: dogService.deleteById,
@@ -67,11 +70,12 @@ function DogManagement() {
       EditProps={
         {
           validationSchema: dogCreateSchema,
-          service: dogService.createDog,
+          service: dogService.updateDog,
           initialValue,
           render: DogCreateDialog,
-        } satisfies ResourceAddEditProps<typeof dogCreateSchema>
+        } satisfies ResourceEditProps<typeof dogCreateSchema>
       }
+      getRows={(item) => ({ ...item, birthDate: new Date(item.birthDate) })}
       getServices={() => dogService.getDogs()}
       serviceKey="dog"
       tableColumns={tableColumns}

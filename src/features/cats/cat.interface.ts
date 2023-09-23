@@ -3,5 +3,5 @@ export interface Cat {
   name: string;
   breed: string;
   sex: "male" | "female";
-  birthDate: Date;
+  birthDate: string;
 }

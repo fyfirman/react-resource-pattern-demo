@@ -17,6 +17,14 @@ const createCat = async (payload: z.infer<typeof catCreateSchema>) => {
 
   return data;
 };
+const updateCat = async (
+  id: string,
+  payload: z.infer<typeof catCreateSchema>
+) => {
+  const { data } = await axios.put<Response<Cat>>(`/cats/${id}`, payload);
+
+  return data;
+};
 const getCats = async () => {
   const { data } = await axios.get<Response<Cat[]>>("/cats");
 
@@ -30,6 +38,7 @@ const deleteById = async (id: string) => {
 
 const catService = {
   createCat,
+  updateCat,
   getCats,
   deleteById,
 };
