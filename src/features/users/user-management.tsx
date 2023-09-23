@@ -76,7 +76,7 @@ function UserManagement() {
       }
       DeleteProps={{
         service: userService.deleteById,
-        label: (item) => `Are you sure to delete ${item.name} ?`,
+        label: (item) => `Delete ${item.name}`,
       }}
     />
   );

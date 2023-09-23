@@ -2,8 +2,13 @@ import { memo, useMemo } from "react";
 // import { useNotification } from "@context/NotificationContext";
 import { useMutation } from "@tanstack/react-query";
 import { Response } from "~/interfaces/response";
-import { Dialog, DialogContent, DialogHeader } from "~/components/ui/dialog";
-import { DialogTitle } from "@radix-ui/react-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import { UseFormReturn, useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -68,9 +73,15 @@ const AddEditResourceDialog = <T extends ZodSchema>(
           <DialogTitle>
             {titleLabel} {title}
           </DialogTitle>
+          <DialogDescription>
+            Make changes to your profile here. Click save when you're done.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="grid gap-4 py-4"
+          >
             {render({ form })}
           </form>
         </Form>

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ResourceRenderProps } from "~/components/resource/resource";
 import { Button } from "~/components/ui/button";
+import { DialogFooter } from "~/components/ui/dialog";
 import {
   FormControl,
   FormDescription,
@@ -65,7 +66,7 @@ const UserCreateDialog = (
           </FormItem>
         )}
       />
-      <div className="flex gap-2">
+      <DialogFooter>
         <Button
           type="submit"
           disabled={
@@ -76,7 +77,7 @@ const UserCreateDialog = (
         >
           Save
         </Button>
-      </div>
+      </DialogFooter>
     </>
   );
 };

@@ -1,6 +1,13 @@
 import { useCallback } from "react";
 import { Button } from "~/components/ui/button";
-import { Dialog, DialogContent, DialogHeader } from "~/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 
 interface DeletePromptDialogProps {
   open: boolean;
@@ -36,17 +43,20 @@ const DeletePromptDialog = (props: DeletePromptDialogProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogHeader>{title}</DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
+        <DialogDescription>
+          Are you sure to make this changes? This changes is irreversible
+        </DialogDescription>
         {children}
-        <div className="flex gap-2">
-          <Button color="primary" onClick={handleCancel}>
+        <DialogFooter>
+          <Button variant="ghost" onClick={handleCancel}>
             {cancelText}
           </Button>
           <Button color="secondary" onClick={onSubmit}>
             {deleteText}
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
