@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies --- intent to disable since msw is only for dev purpose
 import { rest } from "msw";
 import getExampleResponse from "./responses/get-example.json";
+import { faker } from '@faker-js/faker';
 
 export const handlers = [
   // Handles a POST
@@ -17,5 +18,19 @@ export const handlers = [
   // Handles a GET
   rest.get(`/example`, (req, res, ctx) => {
     return res(ctx.json(getExampleResponse));
+  }),
+  rest.get(`/users`, (req, res, ctx) => {
+    const data = [...new Array(100)].map((_, i) => ({
+      id: i,
+      name: faker.person.fullName(),
+      phoneNumber: faker.phone.number(),
+      address: faker.location.streetAddress(),
+      status: Math.random() > 0.7 ? "active": "inactive",
+      createdAt: faker.date.past().toISOString()
+    }));    
+
+    return res(ctx.json({
+      data
+    }));
   }),
 ];

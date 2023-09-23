@@ -1,31 +1,36 @@
-import reactLogo from "~/assets/react.svg";
 import "~/App.css";
-import { useExampleQuery } from "~/hooks/use-example-query";
-import Loading from "~/components/loading";
+import { Button } from "~/components/ui/button";
+import Resource from "~/components/resource/resource";
+import { DynamicTableCol } from "~/components/resource/dynamic-table";
+import { User } from "~/interfaces/user";
+import userService from "~/services/user-service";
+
+interface UserRow extends User {}
 
 function Home() {
-  const { data, isLoading } = useExampleQuery();
-
   return (
-    <div className="App">
-      <div className="flex flex-row justify-center">
-        <a href="https://vitejs.dev" rel="noreferrer" target="_blank">
-          <img alt="Vite logo" className="logo" src="/vite.svg" />
-        </a>
-        <a href="https://reactjs.org" rel="noreferrer" target="_blank">
-          <img alt="React logo" className="logo react" src={reactLogo} />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="flex flex-col">
-        {!isLoading && data ? (
-          <span>Handcrafted by {data.data[0].name}</span>
-        ) : (
-          <Loading />
-        )}
-      </div>
-      <p className="read-the-docs">Click on the the logos to learn more</p>
-    </div>
+    <Resource<User, UserRow>
+      title="User Management"
+      serviceKey="user"
+      getServices={() => userService.getUsers()}
+      getColumns={(): DynamicTableCol[] => [
+        {
+          field: "createdAt",
+          headerName: "Registered at",
+          renderCell: (value) => `${value.getValue("createdAt")}`,
+        },
+        { field: "name", headerName: "Name" },
+        { field: "phoneNumber", headerName: "Phone Number" },
+        { field: "address", headerName: "Address" },
+        { field: "status", headerName: "Status" },
+        {
+          field: "action",
+          headerName: "",
+          renderCell: (value) => <Button onClick={() => {}}>Delete</Button>,
+        },
+      ]}
+      getRows={(item) => item}
+    />
   );
 }
 
