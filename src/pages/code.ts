@@ -1,5 +1,6 @@
 export const userManagement = `import Resource, {
-  ResourceAddEditProps,
+  ResourceAddProps,
+  ResourceEditProps,
   TableColumns,
 } from "~/components/resource/resource";
 import { User } from "~/features/users/user.interface";
@@ -53,40 +54,40 @@ const tableColumns: TableColumns<UserRow> = (onEdit, onDelete) => [
 function UserManagement() {
   return (
     <Resource<User, UserRow>
-      title="User"
-      serviceKey="user"
-      getServices={() => userService.getUsers()}
-      tableColumns={tableColumns}
       AddProps={
         {
           validationSchema: userCreateSchema,
           service: userService.createUser,
-          initialValue: initialValue,
+          initialValue,
           render: UserCreateDialog,
-        } satisfies ResourceAddEditProps<typeof userCreateSchema>
-      }
-      EditProps={
-        {
-          validationSchema: userCreateSchema,
-          service: userService.createUser,
-          initialValue: initialValue,
-          render: UserCreateDialog,
-        } satisfies ResourceAddEditProps<typeof userCreateSchema>
+        } satisfies ResourceAddProps<typeof userCreateSchema>
       }
       DeleteProps={{
         service: userService.deleteById,
         label: (item) => \`Delete \${item.name}\`,
       }}
+      EditProps={
+        {
+          validationSchema: userCreateSchema,
+          service: userService.updateUser,
+          initialValue,
+          render: UserCreateDialog,
+        } satisfies ResourceEditProps<typeof userCreateSchema>
+      }
+      getServices={() => userService.getUsers()}
+      serviceKey="user"
+      tableColumns={tableColumns}
+      title="User"
     />
   );
 }
 
 export default UserManagement;
-
 `;
 
 export const companyManagement = `import Resource, {
-  ResourceAddEditProps,
+  ResourceAddProps,
+  ResourceEditProps,
   TableColumns,
 } from "~/components/resource/resource";
 import companyService, {
@@ -129,7 +130,7 @@ function CompanyManagement() {
           service: companyService.createCompany,
           initialValue,
           render: CompanyCreateDialog,
-        } satisfies ResourceAddEditProps<typeof companyCreateSchema>
+        } satisfies ResourceAddProps<typeof companyCreateSchema>
       }
       DeleteProps={{
         service: companyService.deleteById,
@@ -138,10 +139,10 @@ function CompanyManagement() {
       EditProps={
         {
           validationSchema: companyCreateSchema,
-          service: companyService.createCompany,
+          service: companyService.updateCompany,
           initialValue,
           render: CompanyCreateDialog,
-        } satisfies ResourceAddEditProps<typeof companyCreateSchema>
+        } satisfies ResourceEditProps<typeof companyCreateSchema>
       }
       getServices={() => companyService.getCompanies()}
       serviceKey="company"
@@ -152,11 +153,11 @@ function CompanyManagement() {
 }
 
 export default CompanyManagement;
-
 `;
 
 export const catManagement = `import Resource, {
-  ResourceAddEditProps,
+  ResourceAddProps,
+  ResourceEditProps,
   TableColumns,
 } from "~/components/resource/resource";
 import { RowActions } from "~/components/resource/row-action";
@@ -167,7 +168,9 @@ import CatCreateDialog, {
 import { Cat } from "~/features/cats/cat.interface";
 import { formatDate } from "~/libs/string-helper";
 
-interface CatRow extends Cat {}
+interface CatRow extends Omit<Cat, "birthDate"> {
+  birthDate: Date;
+}
 
 const tableColumns: TableColumns<CatRow> = (onEdit, onDelete) => [
   {
@@ -191,7 +194,7 @@ const tableColumns: TableColumns<CatRow> = (onEdit, onDelete) => [
     field: "birthDate",
     headerName: "Birth Date",
     renderCell(value) {
-      return formatDate(new Date(value.birthDate));
+      return formatDate(value.birthDate);
     },
   },
   {
@@ -215,7 +218,7 @@ function CatManagement() {
           service: catService.createCat,
           initialValue,
           render: CatCreateDialog,
-        } satisfies ResourceAddEditProps<typeof catCreateSchema>
+        } satisfies ResourceAddProps<typeof catCreateSchema>
       }
       DeleteProps={{
         service: catService.deleteById,
@@ -224,11 +227,12 @@ function CatManagement() {
       EditProps={
         {
           validationSchema: catCreateSchema,
-          service: catService.createCat,
+          service: catService.updateCat,
           initialValue,
           render: CatCreateDialog,
-        } satisfies ResourceAddEditProps<typeof catCreateSchema>
+        } satisfies ResourceEditProps<typeof catCreateSchema>
       }
+      getRows={(item) => ({ ...item, birthDate: new Date(item.birthDate) })}
       getServices={() => catService.getCats()}
       serviceKey="cat"
       tableColumns={tableColumns}
@@ -241,7 +245,8 @@ export default CatManagement;
 `;
 
 export const dogManagement = `import Resource, {
-  ResourceAddEditProps,
+  ResourceAddProps,
+  ResourceEditProps,
   TableColumns,
 } from "~/components/resource/resource";
 import { RowActions } from "~/components/resource/row-action";
@@ -252,7 +257,9 @@ import DogCreateDialog, {
 import { Dog } from "~/features/dogs/dog.interface";
 import { formatDate } from "~/libs/string-helper";
 
-interface DogRow extends Dog {}
+interface DogRow extends Omit<Dog, "birthDate"> {
+  birthDate: Date;
+}
 
 const tableColumns: TableColumns<DogRow> = (onEdit, onDelete) => [
   {
@@ -276,7 +283,7 @@ const tableColumns: TableColumns<DogRow> = (onEdit, onDelete) => [
     field: "birthDate",
     headerName: "Birth Date",
     renderCell(value) {
-      return formatDate(new Date(value.birthDate));
+      return formatDate(value.birthDate);
     },
   },
   {
@@ -300,7 +307,7 @@ function DogManagement() {
           service: dogService.createDog,
           initialValue,
           render: DogCreateDialog,
-        } satisfies ResourceAddEditProps<typeof dogCreateSchema>
+        } satisfies ResourceAddProps<typeof dogCreateSchema>
       }
       DeleteProps={{
         service: dogService.deleteById,
@@ -309,11 +316,12 @@ function DogManagement() {
       EditProps={
         {
           validationSchema: dogCreateSchema,
-          service: dogService.createDog,
+          service: dogService.updateDog,
           initialValue,
           render: DogCreateDialog,
-        } satisfies ResourceAddEditProps<typeof dogCreateSchema>
+        } satisfies ResourceEditProps<typeof dogCreateSchema>
       }
+      getRows={(item) => ({ ...item, birthDate: new Date(item.birthDate) })}
       getServices={() => dogService.getDogs()}
       serviceKey="dog"
       tableColumns={tableColumns}
@@ -323,5 +331,4 @@ function DogManagement() {
 }
 
 export default DogManagement;
-
 `;
