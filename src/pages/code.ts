@@ -1,4 +1,4 @@
-import Resource, {
+export const userManagement = `import Resource, {
   ResourceAddEditProps,
   TableColumns,
 } from "~/components/resource/resource";
@@ -75,10 +75,12 @@ function UserManagement() {
       }
       DeleteProps={{
         service: userService.deleteById,
-        label: (item) => `Delete ${item.name}`,
+        label: (item) => \`Delete \${item.name}\`,
       }}
     />
   );
 }
 
 export default UserManagement;
+
+`
