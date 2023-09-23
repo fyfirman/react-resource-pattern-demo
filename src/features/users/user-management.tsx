@@ -3,7 +3,10 @@ import { Button } from "~/components/ui/button";
 import Resource from "~/components/resource/resource";
 import { DynamicTableCol } from "~/components/resource/dynamic-table";
 import { User } from "~/features/users/user.interface";
-import userService from "~/features/users/user.service";
+import userService, { userCreateSchema } from "~/features/users/user.service";
+import UserCreateDialog, {
+  initialValue,
+} from "~/features/users/user-create-dialog";
 
 interface UserRow extends User {}
 
@@ -37,10 +40,9 @@ function UserManagement() {
       getRows={(item) => item}
       AddProps={{
         service: userService.createUser,
-        initialValue: {},
-        render(props) {
-          return <div>Hello</div>;
-        },
+        initialValue: initialValue,
+        validationSchema: userCreateSchema,
+        render: UserCreateDialog,
       }}
       DeleteProps={{
         service: userService.deleteById,

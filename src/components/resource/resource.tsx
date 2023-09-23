@@ -27,24 +27,22 @@ import DynamicTable, {
 } from "~/components/resource/dynamic-table";
 import DeletePromptDialog from "~/components/resource/delete-promp-dialog";
 import AddResourceDialog from "~/components/resource/add-resource-dialog";
+import { ZodObject, ZodRawShape, ZodSchema, z } from "zod";
+import { FieldValues, UseFormReturn } from "react-hook-form";
 
 interface Model {
   id: string;
 }
 
-export interface ResourceRenderProps {
-  isValid: boolean;
-  dirty: boolean;
-  isLoading: boolean;
-  setAdditionalImages: Dispatch<SetStateAction<{ [key: string]: File }>>;
-  setAdditionalImageKeys: Dispatch<SetStateAction<string[]>>;
+export interface ResourceRenderProps<T extends FieldValues> {
+  form: UseFormReturn<T>; // todo
 }
 
-export interface ResourceAddEditProps<T> {
-  service: (body: any) => Promise<Response<T>>;
-  initialValue: any;
-  validationSchema: any;
-  render: (props: ResourceRenderProps) => React.ReactNode;
+export interface ResourceAddEditProps<T extends ZodObject<any>> {
+  service: (body: z.infer<T>) => Promise<Response<z.infer<T>>>;
+  initialValue: z.infer<T>;
+  validationSchema: T;
+  render: (props: ResourceRenderProps<T>) => React.ReactNode;
   excludedInitialKey?: string[];
 }
 
@@ -53,7 +51,12 @@ export interface ResourceRef<T> {
 }
 
 // T: IAdmin
-interface ResourceProps<BaseModel, ResourceRow, FilterModel = unknown> {
+interface ResourceProps<
+  BaseModel,
+  ResourceRow,
+  AddValidation extends ZodRawShape,
+  FilterModel = unknown
+> {
   title: string; // Admin
   serviceKey: string; // admin | topupPackage
   getRows: (item: BaseModel) => ResourceRow;
@@ -72,7 +75,7 @@ interface ResourceProps<BaseModel, ResourceRow, FilterModel = unknown> {
   //   FilterSectionProps<FilterModel>,
   //   "optionFilter" | "setOptionsFilter"
   // >;
-  AddProps?: ResourceAddEditProps<BaseModel>;
+  AddProps?: ResourceAddEditProps<AddValidation>;
   EditProps?: ResourceAddEditProps<BaseModel>;
   ref?: Ref<ResourceRef<BaseModel>>;
 }

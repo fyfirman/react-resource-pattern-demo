@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Response } from "~/interfaces/response";
 import { Dialog, DialogContent, DialogHeader } from "~/components/ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import { useForm } from "react-hook-form";
+import { UseFormReturn, useForm } from "react-hook-form";
 import { z, ZodSchema } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "~/components/ui/form";
@@ -17,16 +17,8 @@ interface AddResourceDialogProps<T extends ZodSchema> {
   onSuccess: () => void;
   service: <Body>(body: Body) => Promise<Response<T>>;
   initialValue: z.infer<T>;
-  validationSchema: ZodSchema;
-  render: (props: {
-    isValid: boolean;
-    dirty: boolean;
-    isLoading: boolean;
-  }) => React.ReactNode;
-}
-
-interface IAdditionalImage {
-  [key: string]: File;
+  validationSchema: T;
+  render: (props: { form: UseFormReturn<T> }) => React.ReactNode;
 }
 
 const AddResourceDialog = <T extends ZodSchema>(
@@ -52,12 +44,11 @@ const AddResourceDialog = <T extends ZodSchema>(
     defaultValues: initialValue,
   });
 
-  const handleSubmit = form.handleSubmit(async (value) => {
-    // @ts-expect-error --- temp
+  const handleSubmit = async (value: z.infer<typeof validationSchema>) => {
     await resourceMutation.mutateAsync(value);
 
     onOpenChange(false);
-  });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} {...rest}>
@@ -65,12 +56,10 @@ const AddResourceDialog = <T extends ZodSchema>(
         <DialogHeader>
           <DialogTitle>Add {title}</DialogTitle>
         </DialogHeader>
-        <Form {...form} handleSubmit={handleSubmit}>
-          {render({
-            isValid: form.formState.isValid,
-            dirty: form.formState.isDirty,
-            isLoading: form.formState.isLoading,
-          })}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            {render({ form })}
+          </form>
         </Form>
       </DialogContent>
     </Dialog>
