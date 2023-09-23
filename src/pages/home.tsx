@@ -1,12 +1,18 @@
 import "~/App.css";
 import UserManagement from "~/features/users/user-management";
-import { userManagement } from "~/pages/code";
+import {
+  catManagement,
+  companyManagement,
+  dogManagement,
+  userManagement,
+} from "~/pages/code";
 import { Highlight, themes } from "prism-react-renderer";
 import CompanyManagement from "~/features/company/company-management";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import CatManagement from "~/features/cats/cat-management";
 import DogManagement from "~/features/dogs/dog-management";
+import CodeBlock from "~/components/code-block";
 
 interface MenuItem {
   component: () => React.ReactElement;
@@ -23,17 +29,17 @@ const menus: MenuItem[] = [
   {
     title: "Company",
     component: CompanyManagement,
-    code: userManagement,
+    code: companyManagement,
   },
   {
     title: "Cat",
     component: CatManagement,
-    code: userManagement,
+    code: catManagement,
   },
   {
     title: "Dog",
     component: DogManagement,
-    code: userManagement,
+    code: dogManagement,
   },
 ];
 
@@ -43,19 +49,7 @@ function Home() {
   return (
     <div className="flex w-[100vw] p-12 gap-8 items-start">
       <div className="flex-[3] p-8 rounded-[0.5rem] border bg-background shadow">
-        <Highlight code={userManagement} language="tsx" theme={themes.vsDark}>
-          {({ style, tokens, getLineProps, getTokenProps }) => (
-            <pre className="text-xs p-4 rounded-sm" style={style}>
-              {tokens.map((line, i) => (
-                <div key={i} {...getLineProps({ line })}>
-                  {line.map((token, key) => (
-                    <span key={key} {...getTokenProps({ token })} />
-                  ))}
-                </div>
-              ))}
-            </pre>
-          )}
-        </Highlight>
+        <CodeBlock code={menus[selected].code} />
       </div>
       <div className="flex-[7]">
         <div className="mb-2">

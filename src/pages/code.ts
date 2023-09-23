@@ -83,4 +83,245 @@ function UserManagement() {
 
 export default UserManagement;
 
-`
+`;
+
+export const companyManagement = `import Resource, {
+  ResourceAddEditProps,
+  TableColumns,
+} from "~/components/resource/resource";
+import companyService, {
+  companyCreateSchema,
+} from "~/features/company/company.service";
+import CompanyCreateDialog, {
+  initialValue,
+} from "~/features/company/company-create-dialog";
+import { RowActions } from "~/components/resource/row-action";
+import { Company } from "~/features/company/company.interface";
+
+interface CompanyRow extends Company {}
+
+const tableColumns: TableColumns<CompanyRow> = (onEdit, onDelete) => [
+  {
+    field: "id",
+    headerName: "ID",
+  },
+  { field: "name", headerName: "Name" },
+  { field: "phoneNumber", headerName: "Phone Number" },
+  { field: "city", headerName: "City" },
+  {
+    field: "action",
+    headerName: "",
+    renderCell: (value) => (
+      <RowActions
+        onDelete={() => onDelete(value)}
+        onEdit={() => onEdit(value)}
+      />
+    ),
+  },
+];
+
+function CompanyManagement() {
+  return (
+    <Resource<Company, CompanyRow>
+      AddProps={
+        {
+          validationSchema: companyCreateSchema,
+          service: companyService.createCompany,
+          initialValue,
+          render: CompanyCreateDialog,
+        } satisfies ResourceAddEditProps<typeof companyCreateSchema>
+      }
+      DeleteProps={{
+        service: companyService.deleteById,
+        label: (item) => \`Delete \${item.name}\`,
+      }}
+      EditProps={
+        {
+          validationSchema: companyCreateSchema,
+          service: companyService.createCompany,
+          initialValue,
+          render: CompanyCreateDialog,
+        } satisfies ResourceAddEditProps<typeof companyCreateSchema>
+      }
+      getServices={() => companyService.getCompanies()}
+      serviceKey="company"
+      tableColumns={tableColumns}
+      title="Company"
+    />
+  );
+}
+
+export default CompanyManagement;
+
+`;
+
+export const catManagement = `import Resource, {
+  ResourceAddEditProps,
+  TableColumns,
+} from "~/components/resource/resource";
+import { RowActions } from "~/components/resource/row-action";
+import catService, { catCreateSchema } from "~/features/cats/cat.service";
+import CatCreateDialog, {
+  initialValue,
+} from "~/features/cats/cat-create-dialog";
+import { Cat } from "~/features/cats/cat.interface";
+import { formatDate } from "~/libs/string-helper";
+
+interface CatRow extends Cat {}
+
+const tableColumns: TableColumns<CatRow> = (onEdit, onDelete) => [
+  {
+    field: "id",
+    headerName: "ID",
+  },
+  { field: "breed", headerName: "Breed" },
+  { field: "name", headerName: "Name" },
+  {
+    field: "sex",
+    headerName: "Sex",
+    renderCell(value) {
+      if (value.sex === "male") {
+        return "Male";
+      }
+
+      return "Female";
+    },
+  },
+  {
+    field: "birthDate",
+    headerName: "Birth Date",
+    renderCell(value) {
+      return formatDate(new Date(value.birthDate));
+    },
+  },
+  {
+    field: "action",
+    headerName: "",
+    renderCell: (value) => (
+      <RowActions
+        onDelete={() => onDelete(value)}
+        onEdit={() => onEdit(value)}
+      />
+    ),
+  },
+];
+
+function CatManagement() {
+  return (
+    <Resource<Cat, CatRow>
+      AddProps={
+        {
+          validationSchema: catCreateSchema,
+          service: catService.createCat,
+          initialValue,
+          render: CatCreateDialog,
+        } satisfies ResourceAddEditProps<typeof catCreateSchema>
+      }
+      DeleteProps={{
+        service: catService.deleteById,
+        label: (item) => \`Delete \${item.name}\`,
+      }}
+      EditProps={
+        {
+          validationSchema: catCreateSchema,
+          service: catService.createCat,
+          initialValue,
+          render: CatCreateDialog,
+        } satisfies ResourceAddEditProps<typeof catCreateSchema>
+      }
+      getServices={() => catService.getCats()}
+      serviceKey="cat"
+      tableColumns={tableColumns}
+      title="Cat"
+    />
+  );
+}
+
+export default CatManagement;
+`;
+
+export const dogManagement = `import Resource, {
+  ResourceAddEditProps,
+  TableColumns,
+} from "~/components/resource/resource";
+import { RowActions } from "~/components/resource/row-action";
+import dogService, { dogCreateSchema } from "~/features/dogs/dog.service";
+import DogCreateDialog, {
+  initialValue,
+} from "~/features/dogs/dog-create-dialog";
+import { Dog } from "~/features/dogs/dog.interface";
+import { formatDate } from "~/libs/string-helper";
+
+interface DogRow extends Dog {}
+
+const tableColumns: TableColumns<DogRow> = (onEdit, onDelete) => [
+  {
+    field: "id",
+    headerName: "ID",
+  },
+  { field: "breed", headerName: "Breed" },
+  { field: "name", headerName: "Name" },
+  {
+    field: "sex",
+    headerName: "Sex",
+    renderCell(value) {
+      if (value.sex === "male") {
+        return "Male";
+      }
+
+      return "Female";
+    },
+  },
+  {
+    field: "birthDate",
+    headerName: "Birth Date",
+    renderCell(value) {
+      return formatDate(new Date(value.birthDate));
+    },
+  },
+  {
+    field: "action",
+    headerName: "",
+    renderCell: (value) => (
+      <RowActions
+        onDelete={() => onDelete(value)}
+        onEdit={() => onEdit(value)}
+      />
+    ),
+  },
+];
+
+function DogManagement() {
+  return (
+    <Resource<Dog, DogRow>
+      AddProps={
+        {
+          validationSchema: dogCreateSchema,
+          service: dogService.createDog,
+          initialValue,
+          render: DogCreateDialog,
+        } satisfies ResourceAddEditProps<typeof dogCreateSchema>
+      }
+      DeleteProps={{
+        service: dogService.deleteById,
+        label: (item) => \`Delete \${item.name}\`,
+      }}
+      EditProps={
+        {
+          validationSchema: dogCreateSchema,
+          service: dogService.createDog,
+          initialValue,
+          render: DogCreateDialog,
+        } satisfies ResourceAddEditProps<typeof dogCreateSchema>
+      }
+      getServices={() => dogService.getDogs()}
+      serviceKey="dog"
+      tableColumns={tableColumns}
+      title="Dog"
+    />
+  );
+}
+
+export default DogManagement;
+
+`;
