@@ -48,6 +48,14 @@ function UserManagement() {
           render: UserCreateDialog,
         } satisfies ResourceAddEditProps<typeof userCreateSchema>
       }
+      EditProps={
+        {
+          validationSchema: userCreateSchema,
+          service: userService.createUser,
+          initialValue: initialValue,
+          render: UserCreateDialog,
+        } satisfies ResourceAddEditProps<typeof userCreateSchema>
+      }
       DeleteProps={{
         service: userService.deleteById,
         label: (item) => `Are you sure to delete ${item.name} ?`,

@@ -21,9 +21,9 @@ import DynamicTable, {
   DynamicTableCol,
 } from "~/components/resource/dynamic-table";
 import DeletePromptDialog from "~/components/resource/delete-promp-dialog";
-import AddResourceDialog from "~/components/resource/add-resource-dialog";
 import { ZodType, z } from "zod";
 import { FieldValues, UseFormReturn } from "react-hook-form";
+import AddEditResourceDialog from "~/components/resource/add-edit-resource-dialog";
 
 interface Model {
   id: string;
@@ -188,7 +188,7 @@ const Resource = forwardRef(
           </div>
         </Layout>
         {AddProps && (
-          <AddResourceDialog
+          <AddEditResourceDialog
             open={openAddDialog}
             onOpenChange={setOpenAddDialog}
             onSuccess={() => resourceQuery.refetch()}
@@ -199,17 +199,17 @@ const Resource = forwardRef(
         )}
         {selectedResource && (
           <>
-            {/* {EditProps && (
-              <EditResourceDialog
+            {EditProps && (
+              <AddEditResourceDialog
                 open={openEditDialog}
-                onClose={() => setOpenEditDialog(false)}
+                onOpenChange={setOpenEditDialog}
                 data={selectedResource}
+                serviceKey={serviceKey}
                 onSuccess={() => resourceQuery.refetch()}
-                serviceKey={StringHelper.toPascalCase(serviceKey)}
                 title={title}
                 {...EditProps}
               />
-            )} */}
+            )}
             {DeleteProps && (
               <DeletePromptDialog
                 title={DeleteProps.label(selectedResource)}

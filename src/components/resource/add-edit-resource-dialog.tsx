@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 // import { useNotification } from "@context/NotificationContext";
 import { useMutation } from "@tanstack/react-query";
 import { Response } from "~/interfaces/response";
@@ -9,7 +9,7 @@ import { z, ZodSchema } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "~/components/ui/form";
 
-interface AddResourceDialogProps<T extends ZodSchema> {
+interface AddEditResourceDialogProps<T extends ZodSchema, D = any> {
   open: boolean;
   onOpenChange: (value: boolean) => void;
   serviceKey: string;
@@ -19,10 +19,11 @@ interface AddResourceDialogProps<T extends ZodSchema> {
   initialValue: z.infer<T>;
   validationSchema: T;
   render: (props: { form: UseFormReturn<T> }) => React.ReactNode;
+  data?: D;
 }
 
-const AddResourceDialog = <T extends ZodSchema>(
-  props: AddResourceDialogProps<T>
+const AddEditResourceDialog = <T extends ZodSchema>(
+  props: AddEditResourceDialogProps<T>
 ) => {
   const {
     open,
@@ -34,14 +35,22 @@ const AddResourceDialog = <T extends ZodSchema>(
     validationSchema,
     render,
     onSuccess,
+    data,
     ...rest
   } = props;
+
+  const defaultValues = useMemo(() => {
+    if (!data) {
+      return initialValue;
+    }
+    return data;
+  }, [initialValue, data]);
 
   const resourceMutation = useMutation([serviceKey], service);
   // const notification = useNotification();
   const form = useForm<T>({
     resolver: zodResolver(validationSchema),
-    defaultValues: initialValue,
+    values: defaultValues,
   });
 
   const handleSubmit = async (value: z.infer<typeof validationSchema>) => {
@@ -50,11 +59,15 @@ const AddResourceDialog = <T extends ZodSchema>(
     onOpenChange(false);
   };
 
+  const titleLabel = !data ? "Add" : "Edit";
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange} {...rest}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add {title}</DialogTitle>
+          <DialogTitle>
+            {titleLabel} {title}
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
@@ -66,4 +79,4 @@ const AddResourceDialog = <T extends ZodSchema>(
   );
 };
 
-export default memo(AddResourceDialog);
+export default memo(AddEditResourceDialog);
