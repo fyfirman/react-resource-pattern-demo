@@ -33,7 +33,7 @@ const UserCreateDialog = (
           <FormItem>
             <FormLabel>Name</FormLabel>
             <FormControl>
-              <Input placeholder="shadcn" {...field} />
+              <Input placeholder="John doe" {...field} />
             </FormControl>
             <FormDescription>This is your public display name.</FormDescription>
             <FormMessage />
@@ -47,7 +47,7 @@ const UserCreateDialog = (
           <FormItem>
             <FormLabel>Address</FormLabel>
             <FormControl>
-              <Input placeholder="shadcn" {...field} />
+              <Input placeholder="63966 Louvenia Turnpike" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -60,7 +60,7 @@ const UserCreateDialog = (
           <FormItem>
             <FormLabel>Phone</FormLabel>
             <FormControl>
-              <Input placeholder="shadcn" {...field} />
+              <Input placeholder="479.378.0957" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
