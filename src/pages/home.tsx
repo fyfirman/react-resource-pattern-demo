@@ -1,8 +1,5 @@
 import "~/App.css";
 import UserManagement from "~/features/users/user-management";
-import Prism from "prismjs";
-import "~/code-light.css";
-import { useEffect } from "react";
 import { userManagement } from "~/pages/code";
 import { Highlight, themes } from "prism-react-renderer";
 
