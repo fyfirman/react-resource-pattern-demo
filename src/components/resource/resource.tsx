@@ -169,7 +169,7 @@ const Resource = forwardRef(
           onClickButton={() => setOpenAddDialog(true)}
           hideButton={!AddProps}
         >
-          <div className="flex flex-col gap-6 mt-4">
+          <div className="flex flex-col gap-6 mt-4 rounded-md border">
             {/* {filter && (
               <FilterSection
                 optionFilter={optionFilter}
