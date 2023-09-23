@@ -57,7 +57,7 @@ const UserCreateDialog = (
         name="phoneNumber"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Phone Number</FormLabel>
+            <FormLabel>Phone</FormLabel>
             <FormControl>
               <Input placeholder="shadcn" {...field} />
             </FormControl>

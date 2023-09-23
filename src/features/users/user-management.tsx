@@ -1,6 +1,6 @@
 import "~/App.css";
 import { Button } from "~/components/ui/button";
-import Resource from "~/components/resource/resource";
+import Resource, { ResourceAddEditProps } from "~/components/resource/resource";
 import { DynamicTableCol } from "~/components/resource/dynamic-table";
 import { User } from "~/features/users/user.interface";
 import userService, { userCreateSchema } from "~/features/users/user.service";
@@ -12,7 +12,7 @@ interface UserRow extends User {}
 
 function UserManagement() {
   return (
-    <Resource<User, UserRow>
+    <Resource<User, UserRow, typeof userCreateSchema>
       title="User Management"
       serviceKey="user"
       getServices={() => userService.getUsers()}
@@ -38,12 +38,14 @@ function UserManagement() {
         },
       ]}
       getRows={(item) => item}
-      AddProps={{
-        service: userService.createUser,
-        initialValue: initialValue,
-        validationSchema: userCreateSchema,
-        render: UserCreateDialog,
-      }}
+      AddProps={
+        {
+          validationSchema: userCreateSchema,
+          service: userService.createUser,
+          initialValue: initialValue,
+          render: UserCreateDialog,
+        } satisfies ResourceAddEditProps<typeof userCreateSchema>
+      }
       DeleteProps={{
         service: userService.deleteById,
         label: (item) => `Are you sure to delete ${item.name} ?`,

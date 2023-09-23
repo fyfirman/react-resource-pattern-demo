@@ -7,7 +7,8 @@ export const userCreateSchema = z.object({
   name: z.string(),
   phoneNumber: z.string(),
   address: z.string(),
-})
+});
+
 
 const createUser = async (payload: z.infer<typeof userCreateSchema>) => {
   const { data } = await axios.post<Response<User>>("/users", payload);

@@ -2,8 +2,6 @@ import {
   useMemo,
   useState,
   useCallback,
-  Dispatch,
-  SetStateAction,
   useImperativeHandle,
   Ref,
   forwardRef,
@@ -20,14 +18,13 @@ import {
 import { Skeleton } from "~/components/ui/skeleton";
 import { Response } from "~/interfaces/response";
 import Layout from "~/components/resource/layout";
-import { toPascalCase } from "~/libs/string-helper";
 import DynamicTable, {
   DynamicTableCol,
   DynamicTableParams,
 } from "~/components/resource/dynamic-table";
 import DeletePromptDialog from "~/components/resource/delete-promp-dialog";
 import AddResourceDialog from "~/components/resource/add-resource-dialog";
-import { ZodObject, ZodRawShape, ZodSchema, z } from "zod";
+import { ZodType, z } from "zod";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 
 interface Model {
@@ -35,14 +32,14 @@ interface Model {
 }
 
 export interface ResourceRenderProps<T extends FieldValues> {
-  form: UseFormReturn<T>; // todo
+  form: UseFormReturn<T>;
 }
 
-export interface ResourceAddEditProps<T extends ZodObject<any>> {
-  service: (body: z.infer<T>) => Promise<Response<z.infer<T>>>;
-  initialValue: z.infer<T>;
+export interface ResourceAddEditProps<T extends ZodType = ZodType> {
   validationSchema: T;
-  render: (props: ResourceRenderProps<T>) => React.ReactNode;
+  initialValue: z.infer<T>;
+  render: (props: ResourceRenderProps<z.infer<T>>) => React.ReactNode;
+  service: (body: z.infer<T>) => Promise<Response<z.infer<T>>>;
   excludedInitialKey?: string[];
 }
 
@@ -51,14 +48,9 @@ export interface ResourceRef<T> {
 }
 
 // T: IAdmin
-interface ResourceProps<
-  BaseModel,
-  ResourceRow,
-  AddValidation extends ZodRawShape,
-  FilterModel = unknown
-> {
-  title: string; // Admin
-  serviceKey: string; // admin | topupPackage
+interface ResourceProps<BaseModel, ResourceRow, FilterModel = unknown> {
+  title: string;
+  serviceKey: string;
   getRows: (item: BaseModel) => ResourceRow;
   getColumns: (
     onEdit: (value: any) => void,
@@ -71,13 +63,13 @@ interface ResourceProps<
     deleteText?: string;
     cancelText?: string;
   };
+  AddProps?: ResourceAddEditProps;
+  EditProps?: ResourceAddEditProps;
+  ref?: Ref<ResourceRef<BaseModel>>;
   // filter?: Omit<
   //   FilterSectionProps<FilterModel>,
   //   "optionFilter" | "setOptionsFilter"
   // >;
-  AddProps?: ResourceAddEditProps<AddValidation>;
-  EditProps?: ResourceAddEditProps<BaseModel>;
-  ref?: Ref<ResourceRef<BaseModel>>;
 }
 
 const Resource = forwardRef(
