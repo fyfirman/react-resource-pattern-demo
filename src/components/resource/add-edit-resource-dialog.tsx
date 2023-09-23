@@ -19,7 +19,7 @@ interface AddEditResourceDialogProps<T extends ZodSchema, D = any> {
   onOpenChange: (value: boolean) => void;
   serviceKey: string;
   title: string;
-  onSuccess: () => void;
+  onSuccess: () => Promise<any>;
   service: <Body>(body: Body) => Promise<Response<T>>;
   initialValue: z.infer<T>;
   validationSchema: T;
@@ -60,14 +60,14 @@ const AddEditResourceDialog = <T extends ZodSchema>(
 
   const handleSubmit = async (value: z.infer<typeof validationSchema>) => {
     await resourceMutation.mutateAsync(value);
-
+    await onSuccess();
     onOpenChange(false);
   };
 
   const titleLabel = !data ? "Add" : "Edit";
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} {...rest}>
+    <Dialog onOpenChange={onOpenChange} open={open} {...rest}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -79,8 +79,8 @@ const AddEditResourceDialog = <T extends ZodSchema>(
         </DialogHeader>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(handleSubmit)}
             className="grid gap-4 py-4"
+            onSubmit={form.handleSubmit(handleSubmit)}
           >
             {render({ form })}
           </form>
