@@ -13,7 +13,7 @@ function UserManagement() {
       title="User Management"
       serviceKey="user"
       getServices={() => userService.getUsers()}
-      getColumns={(): DynamicTableCol[] => [
+      getColumns={(onEdit, onDelete): DynamicTableCol[] => [
         {
           field: "createdAt",
           headerName: "Registered at",
@@ -26,10 +26,19 @@ function UserManagement() {
         {
           field: "action",
           headerName: "",
-          renderCell: (value) => <Button onClick={() => {}}>Delete</Button>,
+          renderCell: (value) => (
+            <div className="flex gap-1">
+              <Button onClick={() => onEdit(value)}>Edit</Button>
+              <Button onClick={() => onDelete(value)}>Delete</Button>
+            </div>
+          ),
         },
       ]}
       getRows={(item) => item}
+      DeleteProps={{
+        service: userService.deleteById,
+        label: (item) => `Are you sure to delete ${item.name} ?`,
+      }}
     />
   );
 }

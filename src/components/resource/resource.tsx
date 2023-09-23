@@ -8,7 +8,6 @@ import {
   Ref,
   forwardRef,
 } from "react";
-// import DeletePromptDialog from "@components/template/DeletePromptDialog/DeletePromptDialog";
 // import { useNotification } from "@context/NotificationContext";
 import {
   QueryObserverResult,
@@ -26,6 +25,7 @@ import DynamicTable, {
   DynamicTableCol,
   DynamicTableParams,
 } from "~/components/resource/dynamic-table";
+import DeletePromptDialog from "~/components/resource/delete-promp-dialog";
 
 interface Model {
   id: string;
@@ -111,31 +111,31 @@ const Resource = forwardRef(
 
     // const notification = useNotification();
 
-    // const deleteMutation = useMutation(
-    //   `delete${toPascalCase(serviceKey)}`,
-    //   () => {
-    //     if (!DeleteProps) {
-    //       return Promise.resolve({
-    //         statusCode: 400,
-    //         data: {},
-    //         message: "Something went wrong.",
-    //       });
-    //     }
-    //     return DeleteProps?.service(selectedResource?.id ?? "");
-    //   },
-    //   {
-    //     onSuccess: (res: any) => {
-    //       resourceQuery.refetch();
-    //       setOpenDeleteDialog(false);
-    //       // notification.show(res.message);
-    //     },
-    //     // onError: notification.default.error,
-    //   }
-    // );
+    const deleteMutation = useMutation(
+      ["delete", serviceKey],
+      () => {
+        if (!DeleteProps) {
+          return Promise.resolve({
+            statusCode: 400,
+            data: {},
+            message: "Something went wrong.",
+          });
+        }
+        return DeleteProps?.service(selectedResource?.id ?? "");
+      },
+      {
+        onSuccess: (res: any) => {
+          resourceQuery.refetch();
+          setOpenDeleteDialog(false);
+          // notification.show(res.message);
+        },
+        // onError: notification.default.error,
+      }
+    );
 
-    // const handleDeleteSubmit = useCallback(() => {
-    //   deleteMutation.mutate();
-    // }, []);
+    const handleDeleteSubmit = useCallback(() => {
+      deleteMutation.mutate();
+    }, []);
 
     const rows: ResourceRow[] = useMemo(
       () => (resourceQuery.data ? resourceQuery.data?.data.map(getRows) : []),
@@ -194,10 +194,10 @@ const Resource = forwardRef(
             title={title}
             {...AddProps}
           />
-        )}
+        )} */}
         {selectedResource && (
           <>
-            {EditProps && (
+            {/* {EditProps && (
               <EditResourceDialog
                 open={openEditDialog}
                 onClose={() => setOpenEditDialog(false)}
@@ -207,11 +207,12 @@ const Resource = forwardRef(
                 title={title}
                 {...EditProps}
               />
-            )}
+            )} */}
             {DeleteProps && (
               <DeletePromptDialog
                 title={DeleteProps.label(selectedResource)}
                 open={openDeleteDialog}
+                onOpenChange={setOpenDeleteDialog}
                 onClose={() => setOpenDeleteDialog(false)}
                 onSubmit={handleDeleteSubmit}
                 cancelText={DeleteProps.cancelText}
@@ -219,7 +220,7 @@ const Resource = forwardRef(
               />
             )}
           </>
-        )} */}
+        )}
       </>
     );
   }

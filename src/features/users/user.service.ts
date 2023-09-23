@@ -7,9 +7,15 @@ const getUsers = async () => {
   
   return data;
 }
+const deleteById = async (id: string) => {
+  const { data } = await axios.delete<Response<User>>(`/users/${id}`);
+  
+  return data;
+}
 
 const userService = {
-  getUsers
+  getUsers,
+  deleteById
 };
 
 export default userService;
