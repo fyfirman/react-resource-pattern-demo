@@ -33,14 +33,14 @@ const Layout = (props: LayoutProps) => {
             Create, Read, Update, and Delete {title}
           </p>
         </div>
-        {!hideButton && (
+        {!hideButton ? (
           <div>
-            <Button type="submit" onClick={onClickButton}>
+            <Button onClick={onClickButton} type="submit">
               <PlusIcon className="mr-2" />
               {buttonAddLabel}
             </Button>
           </div>
-        )}
+        ) : null}
       </div>
       {children}
     </div>

@@ -49,6 +49,12 @@ function Home() {
   return (
     <div className="flex w-[100vw] p-12 gap-8 items-start">
       <div className="flex-[3] p-8 rounded-[0.5rem] border bg-background shadow">
+        <div className="flex flex-col align-left items-start gap-2 mb-8">
+          <h1 className="text-2xl font-bold tracking-tight">Code</h1>
+          <p className="text-muted-foreground">
+            Create, Read, Update, and Delete operation is one code file below
+          </p>
+        </div>
         <CodeBlock code={menus[selected].code} />
       </div>
       <div className="flex-[7]">
