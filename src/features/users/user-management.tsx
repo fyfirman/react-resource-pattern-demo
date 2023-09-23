@@ -35,6 +35,13 @@ function UserManagement() {
         },
       ]}
       getRows={(item) => item}
+      AddProps={{
+        service: userService.createUser,
+        initialValue: {},
+        render(props) {
+          return <div>Hello</div>;
+        },
+      }}
       DeleteProps={{
         service: userService.deleteById,
         label: (item) => `Are you sure to delete ${item.name} ?`,

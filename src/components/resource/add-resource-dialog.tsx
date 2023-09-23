@@ -1,26 +1,27 @@
-import { StyledDialog, StyledDialogTitle } from "acceleration-ui";
-import { DialogProps } from "@material-ui/core";
-import { Formik } from "formik";
-import { Dispatch, memo, SetStateAction, useCallback, useState } from "react";
+import { memo } from "react";
 // import { useNotification } from "@context/NotificationContext";
 import { useMutation } from "@tanstack/react-query";
 import { Response } from "~/interfaces/response";
+import { Dialog, DialogContent, DialogHeader } from "~/components/ui/dialog";
+import { DialogTitle } from "@radix-ui/react-dialog";
+import { useForm } from "react-hook-form";
+import { z, ZodSchema } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form } from "~/components/ui/form";
 
-interface AddResourceDialogProps<T> {
+interface AddResourceDialogProps<T extends ZodSchema> {
   open: boolean;
-  onClose: () => void;
+  onOpenChange: (value: boolean) => void;
   serviceKey: string;
   title: string;
   onSuccess: () => void;
   service: <Body>(body: Body) => Promise<Response<T>>;
-  initialValue: any;
-  validationSchema: any;
+  initialValue: z.infer<T>;
+  validationSchema: ZodSchema;
   render: (props: {
     isValid: boolean;
     dirty: boolean;
     isLoading: boolean;
-    setAdditionalImages: Dispatch<SetStateAction<IAdditionalImage>>;
-    setAdditionalImageKeys: Dispatch<SetStateAction<string[]>>;
   }) => React.ReactNode;
 }
 
@@ -28,10 +29,12 @@ interface IAdditionalImage {
   [key: string]: File;
 }
 
-const AddResourceDialog = <T,>(props: AddResourceDialogProps<T>) => {
+const AddResourceDialog = <T extends ZodSchema>(
+  props: AddResourceDialogProps<T>
+) => {
   const {
     open,
-    onClose,
+    onOpenChange,
     serviceKey,
     service,
     title,
@@ -42,69 +45,35 @@ const AddResourceDialog = <T,>(props: AddResourceDialogProps<T>) => {
     ...rest
   } = props;
 
-  const resourceMutation = useMutation(serviceKey, service);
+  const resourceMutation = useMutation([serviceKey], service);
   // const notification = useNotification();
-  const [additionalImages, setAdditionalImages] = useState<IAdditionalImage>(
-    {}
-  );
-  const [additionalImageKeys, setAdditionalImageKeys] = useState<string[]>([]);
+  const form = useForm<T>({
+    resolver: zodResolver(validationSchema),
+    defaultValues: initialValue,
+  });
 
-  const handleSubmit = useCallback(
-    (value: any) => {
-      const invalidImageKey: string[] = [];
-      additionalImageKeys.forEach((key) => {
-        if (!(additionalImages[key] instanceof File)) {
-          invalidImageKey.push(key);
-        }
-      });
+  const handleSubmit = form.handleSubmit(async (value) => {
+    // @ts-expect-error --- temp
+    await resourceMutation.mutateAsync(value);
 
-      if (invalidImageKey.length !== 0) {
-        const message = `${invalidImageKey.join(", ")} is invalid`;
-        // notification.show(message, "error");
-        return;
-      }
-
-      resourceMutation
-        .mutateAsync({ ...value, ...additionalImages })
-        .then((data) => {
-          onSuccess();
-          handleClose();
-          // notification.show(data.message);
-        });
-      // .catch(notification.default.error);
-    },
-    [additionalImages, additionalImageKeys]
-  );
-
-  const handleClose = useCallback(() => {
-    if (onClose) onClose();
-  }, []);
+    onOpenChange(false);
+  });
 
   return (
-    <StyledDialog
-      open={open}
-      onClose={handleClose}
-      fullWidth
-      maxWidth="sm"
-      {...rest}
-    >
-      <StyledDialogTitle>Add {title}</StyledDialogTitle>
-      <Formik
-        initialValues={initialValue}
-        onSubmit={handleSubmit}
-        validationSchema={validationSchema}
-      >
-        {({ isValid, dirty }) =>
-          render({
-            isValid,
-            dirty,
-            isLoading: resourceMutation.isLoading,
-            setAdditionalImages,
-            setAdditionalImageKeys,
-          })
-        }
-      </Formik>
-    </StyledDialog>
+    <Dialog open={open} onOpenChange={onOpenChange} {...rest}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add {title}</DialogTitle>
+        </DialogHeader>
+        <Form {...form} handleSubmit={handleSubmit}>
+          {render({
+            isValid: form.formState.isValid,
+            dirty: form.formState.isDirty,
+            isLoading: form.formState.isLoading,
+          })}
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

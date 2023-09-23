@@ -1,7 +1,19 @@
 import { Response } from "~/interfaces/response";
 import { axios } from "~/utils/axios-client";
 import { User } from "~/features/users/user.interface";
+import { z } from "zod";
 
+const UserCreateSchema = z.object({
+  name: z.string(),
+  phoneNumber: z.string(),
+  address: z.string(),
+})
+
+const createUser = async (payload: z.infer<typeof UserCreateSchema>) => {
+  const { data } = await axios.post<Response<User>>("/users", payload);
+  
+  return data;
+}
 const getUsers = async () => {
   const { data } = await axios.get<Response<User[]>>("/users");
   
@@ -14,6 +26,7 @@ const deleteById = async (id: string) => {
 }
 
 const userService = {
+  createUser, 
   getUsers,
   deleteById
 };

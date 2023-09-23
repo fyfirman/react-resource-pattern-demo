@@ -26,6 +26,7 @@ import DynamicTable, {
   DynamicTableParams,
 } from "~/components/resource/dynamic-table";
 import DeletePromptDialog from "~/components/resource/delete-promp-dialog";
+import AddResourceDialog from "~/components/resource/add-resource-dialog";
 
 interface Model {
   id: string;
@@ -185,16 +186,16 @@ const Resource = forwardRef(
             )}
           </div>
         </Layout>
-        {/* {AddProps && (
+        {AddProps && (
           <AddResourceDialog
             open={openAddDialog}
-            onClose={() => setOpenAddDialog(false)}
+            onOpenChange={setOpenAddDialog}
             onSuccess={() => resourceQuery.refetch()}
-            serviceKey={StringHelper.toPascalCase(serviceKey)}
+            serviceKey={serviceKey}
             title={title}
             {...AddProps}
           />
-        )} */}
+        )}
         {selectedResource && (
           <>
             {/* {EditProps && (
