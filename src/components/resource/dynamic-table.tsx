@@ -43,7 +43,7 @@ const DynamicTable = <Row extends Record<string, any>>(
         {rows.map((row) => (
           <TableRow key={row.id}>
             {columns.map((column) => (
-              <TableCell key={column.field}>
+              <TableCell key={column.field} align="left">
                 {column.renderCell ? column.renderCell(row) : row[column.field]}
               </TableCell>
             ))}

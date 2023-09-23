@@ -22,8 +22,8 @@ const Layout = (props: LayoutProps) => {
   } = props;
   return (
     <div className={`py-4 ${className}`}>
-      <div className="flex justify-between">
-        <div className="flex flex-col align-left items-start">
+      <div className="flex justify-between mb-8">
+        <div className="flex flex-col align-left items-start gap-2">
           <h1 className="text-2xl font-bold tracking-tight">
             {title} Management
           </h1>
