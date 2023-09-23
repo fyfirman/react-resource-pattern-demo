@@ -21,7 +21,9 @@ const Layout = (props: LayoutProps) => {
     className,
   } = props;
   return (
-    <div className={`py-4 ${className}`}>
+    <div
+      className={`p-8 rounded-[0.5rem] border bg-background shadow ${className}`}
+    >
       <div className="flex justify-between mb-8">
         <div className="flex flex-col align-left items-start gap-2">
           <h1 className="text-2xl font-bold tracking-tight">

@@ -24,6 +24,7 @@ import DeletePromptDialog from "~/components/resource/delete-promp-dialog";
 import { ZodType, z } from "zod";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 import AddEditResourceDialog from "~/components/resource/add-edit-resource-dialog";
+import TableSkeleton from "~/components/resource/table-skeleton";
 
 interface Model {
   id: string;
@@ -183,7 +184,7 @@ const Resource = forwardRef(
                 rows={rows}
               />
             ) : (
-              <Skeleton className="w-[100px] h-[20px] rounded-full" />
+              <TableSkeleton />
             )}
           </div>
         </Layout>
