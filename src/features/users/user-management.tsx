@@ -1,5 +1,4 @@
 import "~/App.css";
-import { Button } from "~/components/ui/button";
 import Resource, {
   ResourceAddEditProps,
   TableColumns,
@@ -9,6 +8,7 @@ import userService, { userCreateSchema } from "~/features/users/user.service";
 import UserCreateDialog, {
   initialValue,
 } from "~/features/users/user-create-dialog";
+import { RowActions } from "~/components/resource/row-action";
 
 interface UserRow extends User {}
 
@@ -25,10 +25,10 @@ const tableColumns: TableColumns<UserRow> = (onEdit, onDelete) => [
     field: "action",
     headerName: "",
     renderCell: (value) => (
-      <div className="flex gap-1">
-        <Button onClick={() => onEdit(value)}>Edit</Button>
-        <Button onClick={() => onDelete(value)}>Delete</Button>
-      </div>
+      <RowActions
+        onDelete={() => onDelete(value)}
+        onEdit={() => onEdit(value)}
+      />
     ),
   },
 ];
