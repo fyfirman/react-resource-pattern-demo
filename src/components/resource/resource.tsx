@@ -12,7 +12,6 @@ import {
   useMutation,
   useQuery,
 } from "@tanstack/react-query";
-// import AddResourceDialog from "./Dialog/AddResourceDialog";
 // import EditResourceDialog from "./Dialog/EditResourceDialog";
 // import FilterSection, { FilterSectionProps } from "./components/FilterSection";
 import { Skeleton } from "~/components/ui/skeleton";
@@ -53,9 +52,9 @@ interface ResourceProps<BaseModel, ResourceRow, FilterModel = unknown> {
   serviceKey: string;
   getRows: (item: BaseModel) => ResourceRow;
   getColumns: (
-    onEdit: (value: any) => void,
-    onDelete: (value: any) => void
-  ) => DynamicTableCol[];
+    onEdit: (value: ResourceRow) => void,
+    onDelete: (value: ResourceRow) => void
+  ) => DynamicTableCol<ResourceRow>[];
   getServices: (filter?: FilterModel) => Promise<Response<BaseModel[]>>;
   DeleteProps?: {
     service: (id: string) => Promise<Response<BaseModel>>;
@@ -146,13 +145,13 @@ const Resource = forwardRef(
       [forwardedRef]
     );
 
-    const handleEdit = (row: DynamicTableParams) => {
-      setSelectedResource(row.values as ResourceRow);
+    const handleEdit = (row: ResourceRow) => {
+      setSelectedResource(row);
       setOpenEditDialog(true);
     };
 
-    const handleDelete = (row: DynamicTableParams) => {
-      setSelectedResource(row.values as ResourceRow);
+    const handleDelete = (row: ResourceRow) => {
+      setSelectedResource(row);
       setOpenDeleteDialog(true);
     };
 
@@ -172,7 +171,7 @@ const Resource = forwardRef(
               />
             )} */}
             {!resourceQuery.isFetching ? (
-              <DynamicTable
+              <DynamicTable<ResourceRow>
                 columns={getColumns(handleEdit, handleDelete)}
                 rows={rows}
               />

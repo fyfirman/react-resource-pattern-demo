@@ -7,29 +7,26 @@ import {
   TableRow,
 } from "~/components/ui/table";
 
-export interface DynamicTableParams {
-  getValue: (field: string) => any;
-  values: any;
+export interface DynamicTableParams<Row> {
+  getValue: (field: string) => unknown;
+  values: Row;
 }
 
-export interface DynamicTableCol {
+export interface DynamicTableCol<Row> {
   field: string;
   headerName: (() => React.ReactNode) | string;
-  renderCell?: (value: DynamicTableParams) => React.ReactNode;
+  renderCell?: (value: Row) => React.ReactNode;
 }
 
-export interface DynamicTableProps {
-  columns: DynamicTableCol[];
-  rows: any[];
+export interface DynamicTableProps<Row> {
+  columns: DynamicTableCol<Row>[];
+  rows: Row[];
 }
 
-const DynamicTable = (props: DynamicTableProps) => {
+const DynamicTable = <Row extends Record<string, any>>(
+  props: DynamicTableProps<Row>
+) => {
   const { columns, rows } = props;
-
-  const parseParams = (row: any): DynamicTableParams => ({
-    getValue: (field) => row[field],
-    values: row,
-  });
 
   return (
     <Table>
@@ -47,9 +44,7 @@ const DynamicTable = (props: DynamicTableProps) => {
           <TableRow key={row.id}>
             {columns.map((column) => (
               <TableCell key={column.field}>
-                {column.renderCell
-                  ? column.renderCell(parseParams(row))
-                  : row[column.field]}
+                {column.renderCell ? column.renderCell(row) : row[column.field]}
               </TableCell>
             ))}
           </TableRow>

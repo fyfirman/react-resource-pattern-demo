@@ -16,11 +16,10 @@ function UserManagement() {
       title="User Management"
       serviceKey="user"
       getServices={() => userService.getUsers()}
-      getColumns={(onEdit, onDelete): DynamicTableCol[] => [
+      getColumns={(onEdit, onDelete): DynamicTableCol<UserRow>[] => [
         {
           field: "createdAt",
           headerName: "Registered at",
-          renderCell: (value) => `${value.getValue("createdAt")}`,
         },
         { field: "name", headerName: "Name" },
         { field: "phoneNumber", headerName: "Phone Number" },
