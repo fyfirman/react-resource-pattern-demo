@@ -1,6 +1,6 @@
 import { Response } from "~/interfaces/response";
 import { axios } from "~/utils/axios-client";
-import { User } from "~/interfaces/user";
+import { User } from "~/features/users/user.interface";
 
 const getUsers = async () => {
   const { data } = await axios.get<Response<User[]>>("/users");
