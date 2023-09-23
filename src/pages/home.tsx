@@ -12,6 +12,7 @@ import { Button } from "~/components/ui/button";
 import CatManagement from "~/features/cats/cat-management";
 import DogManagement from "~/features/dogs/dog-management";
 import CodeBlock from "~/components/code-block";
+import architecture from "~/assets/architecture.jpg";
 
 interface MenuItem {
   Component: React.FC;
@@ -79,9 +80,27 @@ function Home() {
             for customization based on the unique attributes of each resource.
           </p>
 
+          <h2 className="text-2xl font-bold tracking-tight">Solution</h2>
+          <img alt="architecture" src={architecture} />
+          <p className="text-muted-foreground">
+            To solve this problem, I create a pattern components called{" "}
+            <b>"Resource"</b> which contain the logic how I do CRUD operation.
+            Then, every entity would be pass as props to the components.
+          </p>
           <h2 className="text-2xl font-bold tracking-tight">Code</h2>
           <p className="text-muted-foreground">
-            Create, Read, Update, and Delete operation is one code file below
+            The implementation of the code would be like below, it would simpler
+            because we hide the logic behind the Resource components (See the
+            code{" "}
+            <a
+              className="text-blue-400"
+              href="https://github.com/fyfirman/react-resource-pattern-demo/blob/main/src/components/resource/resource.tsx"
+              rel="noreferrer"
+              target="_blank"
+            >
+              here
+            </a>
+            ).
           </p>
         </div>
         <CodeBlock code={code} />
