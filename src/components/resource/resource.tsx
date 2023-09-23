@@ -116,8 +116,8 @@ const Resource = forwardRef(
       },
       {
         onSuccess: async () => {
-          await resourceQuery.refetch();
           setOpenDeleteDialog(false);
+          await resourceQuery.refetch();
         },
       }
     );

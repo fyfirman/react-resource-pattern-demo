@@ -64,8 +64,8 @@ const AddEditResourceDialog = <T extends ZodSchema>(
 
   const handleSubmit = async (value: z.infer<typeof validationSchema>) => {
     await resourceMutation.mutateAsync(value);
-    await onSuccess();
     onOpenChange(false);
+    await onSuccess();
   };
 
   const titleLabel = !data ? "Add" : "Edit";

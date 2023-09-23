@@ -14,7 +14,7 @@ import DogManagement from "~/features/dogs/dog-management";
 import CodeBlock from "~/components/code-block";
 
 interface MenuItem {
-  component: () => React.ReactElement;
+  Component: React.FC;
   title: string;
   code: string;
 }
@@ -22,28 +22,30 @@ interface MenuItem {
 const menus: MenuItem[] = [
   {
     title: "User",
-    component: UserManagement,
+    Component: UserManagement,
     code: userManagement,
   },
   {
     title: "Company",
-    component: CompanyManagement,
+    Component: CompanyManagement,
     code: companyManagement,
   },
   {
     title: "Cat",
-    component: CatManagement,
+    Component: CatManagement,
     code: catManagement,
   },
   {
     title: "Dog",
-    component: DogManagement,
+    Component: DogManagement,
     code: dogManagement,
   },
 ];
 
 function Home() {
   const [selected, setSelected] = useState<number>(0);
+
+  const { Component, code } = menus[selected];
 
   return (
     <div className="flex w-[100vw] p-12 gap-8 items-start">
@@ -82,7 +84,7 @@ function Home() {
             Create, Read, Update, and Delete operation is one code file below
           </p>
         </div>
-        <CodeBlock code={menus[selected].code} />
+        <CodeBlock code={code} />
       </div>
       <div className="flex-[7]">
         <div className="mb-2">
@@ -97,7 +99,7 @@ function Home() {
             </Button>
           ))}
         </div>
-        {menus[selected].component()}
+        <Component />
       </div>
     </div>
   );

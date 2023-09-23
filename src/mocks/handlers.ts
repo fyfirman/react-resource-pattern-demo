@@ -2,6 +2,10 @@
 import { rest } from "msw";
 import { faker } from "@faker-js/faker";
 
+const delay = (delayInms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, delayInms));
+};
+
 const totalData = 10;
 
 let users = [...new Array(totalData)].map((_, i) => ({
@@ -151,7 +155,8 @@ export const handlers = [
   }),
 
   // Handles a GET
-  rest.get(`/users`, (req, res, ctx) => {
+  rest.get(`/users`, async (req, res, ctx) => {
+    await delay(500);
     return res(
       ctx.json({
         data: users.sort(
