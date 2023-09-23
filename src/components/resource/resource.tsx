@@ -19,7 +19,6 @@ import { Response } from "~/interfaces/response";
 import Layout from "~/components/resource/layout";
 import DynamicTable, {
   DynamicTableCol,
-  DynamicTableParams,
 } from "~/components/resource/dynamic-table";
 import DeletePromptDialog from "~/components/resource/delete-promp-dialog";
 import AddResourceDialog from "~/components/resource/add-resource-dialog";
@@ -46,15 +45,16 @@ export interface ResourceRef<T> {
   refetchRead: () => Promise<QueryObserverResult<Response<T[]>, unknown>>;
 }
 
-// T: IAdmin
+export type TableColumns<T> = (
+  onEdit: (value: T) => void,
+  onDelete: (value: T) => void
+) => DynamicTableCol<T>[];
+
 interface ResourceProps<BaseModel, ResourceRow, FilterModel = unknown> {
   title: string;
   serviceKey: string;
-  getRows: (item: BaseModel) => ResourceRow;
-  getColumns: (
-    onEdit: (value: ResourceRow) => void,
-    onDelete: (value: ResourceRow) => void
-  ) => DynamicTableCol<ResourceRow>[];
+  getRows?: (item: BaseModel) => ResourceRow;
+  tableColumns: TableColumns<ResourceRow>;
   getServices: (filter?: FilterModel) => Promise<Response<BaseModel[]>>;
   DeleteProps?: {
     service: (id: string) => Promise<Response<BaseModel>>;
@@ -81,7 +81,7 @@ const Resource = forwardRef(
       serviceKey,
       getServices,
       getRows,
-      getColumns,
+      tableColumns,
       DeleteProps,
       AddProps,
       EditProps,
@@ -89,7 +89,7 @@ const Resource = forwardRef(
       filter,
     } = props;
 
-    type ResourceRow = ReturnType<typeof getRows>;
+    type ResourceRow = typeof getRows extends undefined ? T : R;
 
     const [openAddDialog, setOpenAddDialog] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -132,10 +132,17 @@ const Resource = forwardRef(
       deleteMutation.mutate();
     }, []);
 
-    const rows: ResourceRow[] = useMemo(
-      () => (resourceQuery.data ? resourceQuery.data?.data.map(getRows) : []),
-      [resourceQuery.data]
-    );
+    const rows: ResourceRow[] = useMemo(() => {
+      if (!resourceQuery.data) {
+        return [];
+      }
+
+      if (!getRows) {
+        return resourceQuery.data.data as unknown as R[];
+      }
+
+      return resourceQuery.data.data.map(getRows);
+    }, [resourceQuery.data]);
 
     useImperativeHandle(
       forwardedRef,
@@ -172,7 +179,7 @@ const Resource = forwardRef(
             )} */}
             {!resourceQuery.isFetching ? (
               <DynamicTable<ResourceRow>
-                columns={getColumns(handleEdit, handleDelete)}
+                columns={tableColumns(handleEdit, handleDelete)}
                 rows={rows}
               />
             ) : (
