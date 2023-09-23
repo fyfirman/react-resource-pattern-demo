@@ -6,15 +6,11 @@ import {
   Ref,
   forwardRef,
 } from "react";
-// import { useNotification } from "@context/NotificationContext";
 import {
   QueryObserverResult,
   useMutation,
   useQuery,
 } from "@tanstack/react-query";
-// import EditResourceDialog from "./Dialog/EditResourceDialog";
-// import FilterSection, { FilterSectionProps } from "./components/FilterSection";
-import { Skeleton } from "~/components/ui/skeleton";
 import { Response } from "~/interfaces/response";
 import Layout from "~/components/resource/layout";
 import DynamicTable, {
@@ -66,10 +62,6 @@ interface ResourceProps<BaseModel, ResourceRow, FilterModel = unknown> {
   AddProps?: ResourceAddEditProps;
   EditProps?: ResourceAddEditProps;
   ref?: Ref<ResourceRef<BaseModel>>;
-  // filter?: Omit<
-  //   FilterSectionProps<FilterModel>,
-  //   "optionFilter" | "setOptionsFilter"
-  // >;
 }
 
 const Resource = forwardRef(
@@ -86,8 +78,6 @@ const Resource = forwardRef(
       DeleteProps,
       AddProps,
       EditProps,
-      // @ts-expect-error --- temp disabling the filter
-      filter,
     } = props;
 
     type ResourceRow = typeof getRows extends undefined ? T : R;
@@ -96,20 +86,17 @@ const Resource = forwardRef(
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [selectedResource, setSelectedResource] = useState<ResourceRow>();
-    const [optionFilter, setOptionsFilter] = useState<F>();
-    const resourceQuery = useQuery(
-      [serviceKey, filter && optionFilter],
-      async () => {
-        const result = await getServices(optionFilter);
+    const resourceQuery = useQuery({
+      queryKey: [serviceKey],
+      queryFn: async () => {
+        const result = await getServices();
         return result;
-      }
-    );
-
-    // const notification = useNotification();
+      },
+    });
 
     const deleteMutation = useMutation(
       ["delete", serviceKey],
-      () => {
+      async () => {
         if (!DeleteProps) {
           return Promise.resolve({
             statusCode: 400,
@@ -117,15 +104,13 @@ const Resource = forwardRef(
             message: "Something went wrong.",
           });
         }
-        return DeleteProps?.service(selectedResource?.id ?? "");
+        return DeleteProps.service(selectedResource?.id ?? "");
       },
       {
-        onSuccess: (res: any) => {
-          resourceQuery.refetch();
+        onSuccess: async () => {
+          await resourceQuery.refetch();
           setOpenDeleteDialog(false);
-          // notification.show(res.message);
         },
-        // onError: notification.default.error,
       }
     );
 
@@ -166,18 +151,11 @@ const Resource = forwardRef(
     return (
       <>
         <Layout
-          title={title}
-          onClickButton={() => setOpenAddDialog(true)}
           hideButton={!AddProps}
+          onClickButton={() => setOpenAddDialog(true)}
+          title={title}
         >
           <div className="flex flex-col gap-6 mt-4 rounded-md border">
-            {/* {filter && (
-              <FilterSection
-                optionFilter={optionFilter}
-                setOptionsFilter={setOptionsFilter}
-                {...filter}
-              />
-            )} */}
             {!resourceQuery.isFetching ? (
               <DynamicTable<ResourceRow>
                 columns={tableColumns(handleEdit, handleDelete)}
@@ -188,42 +166,42 @@ const Resource = forwardRef(
             )}
           </div>
         </Layout>
-        {AddProps && (
+        {AddProps ? (
           <AddEditResourceDialog
-            open={openAddDialog}
             onOpenChange={setOpenAddDialog}
             onSuccess={() => resourceQuery.refetch()}
+            open={openAddDialog}
             serviceKey={serviceKey}
             title={title}
             {...AddProps}
           />
-        )}
-        {selectedResource && (
+        ) : null}
+        {selectedResource ? (
           <>
-            {EditProps && (
+            {EditProps ? (
               <AddEditResourceDialog
-                open={openEditDialog}
-                onOpenChange={setOpenEditDialog}
                 data={selectedResource}
-                serviceKey={serviceKey}
+                onOpenChange={setOpenEditDialog}
                 onSuccess={() => resourceQuery.refetch()}
+                open={openEditDialog}
+                serviceKey={serviceKey}
                 title={title}
                 {...EditProps}
               />
-            )}
-            {DeleteProps && (
+            ) : null}
+            {DeleteProps ? (
               <DeletePromptDialog
-                title={DeleteProps.label(selectedResource)}
-                open={openDeleteDialog}
-                onOpenChange={setOpenDeleteDialog}
-                onClose={() => setOpenDeleteDialog(false)}
-                onSubmit={handleDeleteSubmit}
                 cancelText={DeleteProps.cancelText}
                 deleteText={DeleteProps.deleteText}
+                onClose={() => setOpenDeleteDialog(false)}
+                onOpenChange={setOpenDeleteDialog}
+                onSubmit={handleDeleteSubmit}
+                open={openDeleteDialog}
+                title={DeleteProps.label(selectedResource)}
               />
-            )}
+            ) : null}
           </>
-        )}
+        ) : null}
       </>
     );
   }
