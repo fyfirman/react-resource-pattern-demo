@@ -67,4 +67,22 @@ export const handlers = [
       })
     );
   }),
+  rest.get(`/dogs`, (req, res, ctx) => {
+    const data = [...new Array(100)].map((_, i) => ({
+      id: i,
+      breed: faker.animal.dog(),
+      name: faker.person.middleName(),
+      sex: faker.person.sexType(),
+      birthDate: faker.date.between({
+        from: "2020-01-01T00:00:00.000Z",
+        to: "2023-01-01T00:00:00.000Z",
+      }),
+    }));
+
+    return res(
+      ctx.json({
+        data,
+      })
+    );
+  }),
 ];

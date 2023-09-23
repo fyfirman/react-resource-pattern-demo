@@ -6,6 +6,7 @@ import CompanyManagement from "~/features/company/company-management";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import CatManagement from "~/features/cats/cat-management";
+import DogManagement from "~/features/dogs/dog-management";
 
 interface MenuItem {
   component: () => React.ReactElement;
@@ -27,6 +28,11 @@ const menus: MenuItem[] = [
   {
     title: "Cat",
     component: CatManagement,
+    code: userManagement,
+  },
+  {
+    title: "Dog",
+    component: DogManagement,
     code: userManagement,
   },
 ];
